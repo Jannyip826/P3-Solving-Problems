@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>三年級乘除法應用題 - 混合大挑戰</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body { 
+            margin: 0; 
+            padding: 20px 10px;
+            font-family: "Microsoft JhengHei", "PingFang TC", Arial, sans-serif; 
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+
+        #game-container { 
+            width: 100%; 
+            max-width: 980px; 
+            background: rgba(255, 255, 255, 0.96); 
+            border-radius: 25px; 
+            padding: 25px 30px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
+            text-align: center; 
+        }
+
+        h1 {
+            font-size: 30px;
+            color: #2d3436;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .header-info {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            background: #ffeaa7;
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 2px solid #fdcb6e;
+        }
+
+        .badge.progress {
+            background: #e1f5fe;
+            border-color: #03a9f4;
+            color: #0277bd;
+        }
+
+        .badge.score {
+            background: #e8f8f5;
+            border-color: #2ecc71;
+            color: #1e8449;
+        }
+
+        .switch-lv-btn {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+            transition: all 0.2s;
+        }
+
+        .switch-lv-btn:hover {
+            background: #5a4bcf;
+            transform: scale(1.05);
+        }
+
+        .problem-card {
+            background: #f8f9fa;
+            border: 3px solid #dfe6e9;
+            border-radius: 20px;
+            padding: 18px 22px;
+            font-size: 22px;
+            line-height: 1.6;
+            color: #2d3436;
+            text-align: left;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .main-workspace {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .left-panel {
+            flex: 1 1 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .single-rect-input {
+            width: 100%;
+            max-width: 400px;
+            height: 60px;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            color: #2d3436;
+            background: #ffffff;
+            border: 3.5px solid #0984e3;
+            border-radius: 15px;
+            outline: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            letter-spacing: 2px;
+        }
+
+        .single-rect-input:focus {
+            border-color: #fdcb6e;
+            box-shadow: 0 0 12px rgba(253, 203, 110, 0.8);
+            background: #fffdf0;
+        }
+
+        .single-rect-input:disabled {
+            background: #e9ecef;
+            border-color: #b2bec3;
+            color: #636e72;
+        }
+
+        .equation-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .status-icon {
+            font-size: 32px;
+            min-width: 38px;
+        }
+
+        .statement-row {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2d3436;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .statement-input {
+            width: 90px;
+            height: 48px;
+            font-size: 22px;
+        }
+
+        /* 動態除法直式容器 */
+        .long-division-container {
+            background: #ffffff;
+            border: 3px dashed #0984e3;
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 360px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .long-div-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #0984e3;
+            margin-bottom: 10px;
+        }
+
+        .long-div-grid {
+            display: grid;
+            gap: 4px;
+            align-items: center;
+            justify-items: center;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .long-div-grid.digits-2-1step { grid-template-columns: 40px 10px 40px 40px; }
+        .long-div-grid.digits-2-2step { grid-template-columns: 40px 10px 40px 40px; }
+        .long-div-grid.digits-3 { grid-template-columns: 40px 10px 40px 40px 40px; }
+
+        .long-div-input {
+            width: 36px;
+            height: 36px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            border: 2px solid #b2bec3;
+            border-radius: 8px;
+            outline: none;
+            background: #f8f9fa;
+        }
+
+        .long-div-input:focus {
+            border-color: #fdcb6e;
+            background: #fffdf0;
+        }
+
+        .long-div-symbol {
+            font-size: 24px;
+            color: #2d3436;
+        }
+
+        .long-div-line-2 { grid-column: 3 / 5; border-top: 3px solid #2d3436; width: 100%; height: 0; margin-top: -10px; }
+        .long-div-line-3 { grid-column: 3 / 6; border-top: 3px solid #2d3436; width: 100%; height: 0; margin-top: -10px; }
+        .long-div-subline-2 { grid-column: 3 / 5; border-top: 2px solid #2d3436; width: 100%; height: 0; margin-top: -10px; }
+        .long-div-subline-3 { grid-column: 3 / 6; border-top: 2px solid #2d3436; width: 100%; height: 0; margin-top: -10px; }
+        .long-div-bottomline-2 { grid-column: 3 / 5; border-top: 2px solid #2d3436; width: 100%; height: 0; margin-top: -6px; }
+        .long-div-bottomline-3 { grid-column: 3 / 6; border-top: 2px solid #2d3436; width: 100%; height: 0; margin-top: -6px; }
+
+        .keypad-panel {
+            flex: 0 0 260px;
+            background: #eef2f7;
+            border: 3px solid #b2bec3;
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+            margin: 0 auto;
+        }
+
+        .keypad-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #485563;
+            margin-bottom: 10px;
+        }
+
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .key-btn {
+            height: 52px;
+            font-size: 22px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            background: #ffffff;
+            color: #2d3436;
+            box-shadow: 0 4px 0 #b2bec3;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .key-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #b2bec3;
+        }
+
+        .key-btn.op-key { background: #ff7675; color: white; box-shadow: 0 4px 0 #d63031; }
+        .key-btn.func-key { background: #ffeaa7; color: #d63031; box-shadow: 0 4px 0 #fdcb6e; font-size: 18px; }
+
+        .action-btn { 
+            font-size: 22px; 
+            font-weight: bold;
+            padding: 12px 35px; 
+            background: #0984e3; 
+            color: white; 
+            border: none; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            box-shadow: 0 6px 12px rgba(9, 132, 227, 0.3);
+            transition: all 0.15s; 
+            margin-top: 10px;
+        }
+
+        .action-btn:hover { background: #0069d9; }
+        .action-btn:active { transform: translateY(3px); box-shadow: 0 2px 5px rgba(9, 132, 227, 0.3); }
+        .action-btn:disabled { background: #b2bec3; cursor: not-allowed; box-shadow: none; }
+
+        .msg { 
+            margin-top: 10px; 
+            font-size: 20px; 
+            font-weight: bold; 
+            min-height: 32px; 
+            width: 100%;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.65);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(4px);
+            padding: 15px;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 25px;
+            text-align: left;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-box h2 {
+            font-size: 26px;
+            color: #d63031;
+            margin-top: 0;
+            border-bottom: 3px dashed #fdcb6e;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .level-select-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 12px;
+            justify-content: center;
+            margin: 25px 0 10px 0;
+        }
+
+        .level-card {
+            background: #f8f9fa;
+            border: 4px solid #74b9ff;
+            border-radius: 20px;
+            padding: 15px 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+
+        .level-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: #0984e3;
+            box-shadow: 0 15px 25px rgba(9, 132, 227, 0.25);
+            background: #e3f2fd;
+        }
+
+        .level-card .card-icon { font-size: 36px; margin-bottom: 4px; }
+        .level-card .card-title { font-size: 16px; font-weight: bold; color: #2d3436; margin-bottom: 4px; }
+        .level-card .card-desc { font-size: 12px; color: #636e72; line-height: 1.4; }
+
+        .teacher-guide { font-size: 17px; line-height: 1.6; color: #2c3e50; }
+        .teacher-guide .concept-box {
+            background: #fff9db;
+            border-left: 6px solid #f1c40f;
+            padding: 12px 18px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .visual-demo {
+            background: #f0f9ff;
+            border: 2px dashed #74b9ff;
+            border-radius: 16px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .demo-title { font-weight: bold; color: #0984e3; font-size: 18px; }
+        .timer-tag {
+            background: #e1f5fe;
+            color: #0288d1;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid #81d4fa;
+        }
+
+        .replay-btn {
+            background: #00b894;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 5px 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 184, 148, 0.3);
+            transition: all 0.2s;
+            margin-right: 8px;
+        }
+
+        .replay-btn:hover { background: #00a182; transform: scale(1.05); }
+
+        .groups-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+        .group-card { background: #ffffff; border: 3px solid #0984e3; border-radius: 12px; padding: 8px; width: 105px; box-shadow: 0 4px 8px rgba(0,0,0,0.08); opacity: 0; transform: translateY(20px); }
+        .group-card.child-1 { border-color: #ff7675; background: #fff5f5; }
+        .group-card.child-2 { border-color: #74b9ff; background: #f0f8ff; }
+        .group-card.child-3 { border-color: #fdcb6e; background: #fffdf0; }
+        .group-card.child-4 { border-color: #a29bfe; background: #f8f7ff; }
+
+        .group-card .icon { font-size: 30px; }
+        .group-card .label { font-size: 14px; color: #2d3436; font-weight: bold; }
+        .group-card .count { font-size: 14px; color: #d63031; font-weight: bold; margin-top: 2px; }
+
+        .visual-demo.animate .group-card { animation: popCard 0.6s ease forwards; }
+        .visual-demo.animate .child-1 { animation-delay: 0.2s; }
+        .visual-demo.animate .child-2 { animation-delay: 0.7s; }
+        .visual-demo.animate .child-3 { animation-delay: 1.2s; }
+        .visual-demo.animate .child-4 { animation-delay: 1.7s; }
+
+        .merge-arrow { font-size: 22px; color: #00b894; opacity: 0; margin: 8px 0; }
+        .visual-demo.animate .merge-arrow { animation: fadeIn 0.6s ease 2.2s forwards; }
+
+        .total-result-card { background: #e8f8f5; border: 3px solid #2ecc71; border-radius: 12px; padding: 10px 16px; display: inline-block; font-size: 18px; font-weight: bold; color: #1e8449; opacity: 0; }
+        .visual-demo.animate .total-result-card { animation: popCard 0.8s ease 2.6s forwards; }
+
+        .lv2-demo-box { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+        .taxi-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+        .taxi-card { background: #fff3bf; border: 2px solid #f1c40f; border-radius: 10px; padding: 8px 12px; font-weight: bold; opacity: 0; transform: scale(0.8); }
+        .taxi-card.extra { background: #ffc9c9; border-color: #e03131; }
+        
+        .visual-demo.animate-lv2-1 .taxi-card { animation: popCard 0.5s ease forwards; }
+        .visual-demo.animate-lv2-1 .t1 { animation-delay: 0.3s; }
+        .visual-demo.animate-lv2-1 .t2 { animation-delay: 0.7s; }
+        .visual-demo.animate-lv2-1 .t3 { animation-delay: 1.1s; }
+        .visual-demo.animate-lv2-1 .t4 { animation-delay: 1.5s; }
+        .visual-demo.animate-lv2-1 .t5 { animation-delay: 2.1s; }
+        .visual-demo.animate-lv2-1 .total-result-card { animation: popCard 0.8s ease 2.6s forwards; }
+
+        .flower-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+        .flower-card { background: #eebefa; border: 2px solid #cc5de8; border-radius: 10px; padding: 8px 12px; font-weight: bold; opacity: 0; transform: scale(0.8); }
+        .flower-card.discard { background: #e9ecef; border-color: #adb5bd; color: #868e96; }
+        
+        .visual-demo.animate-lv2-2 .flower-card { animation: popCard 0.5s ease forwards; }
+        .visual-demo.animate-lv2-2 .f1 { animation-delay: 0.3s; }
+        .visual-demo.animate-lv2-2 .f2 { animation-delay: 0.7s; }
+        .visual-demo.animate-lv2-2 .f3 { animation-delay: 1.1s; }
+        .visual-demo.animate-lv2-2 .f4 { animation-delay: 1.7s; }
+        .visual-demo.animate-lv2-2 .total-result-card { animation: popCard 0.8s ease 2.3s forwards; }
+
+        /* 線段圖動畫樣式 */
+        .bar-model-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-start;
+            margin: 15px auto;
+            max-width: 500px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .bar-label {
+            width: 80px;
+            font-weight: bold;
+            text-align: right;
+            font-size: 16px;
+            color: #2d3436;
+        }
+
+        .bar-flex-track {
+            flex: 1;
+            display: flex;
+            height: 36px;
+            border-left: 3px solid #2d3436;
+            position: relative;
+            align-items: center;
+        }
+
+        .bar-block {
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #2d3436;
+            font-size: 14px;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .bar-block.purple { background: #e8d5ff; border: 2px solid #a855f7; }
+        .bar-block.green { background: #dcfce7; border: 2px solid #22c55e; }
+        .bar-block.blue { background: #bae6fd; border: 2px solid #0284c7; }
+
+        .visual-demo.animate-lv3-1 .bar-block.show { opacity: 1; transform: scaleX(1); }
+        .visual-demo.animate-lv3-2 .bar-block.show { opacity: 1; transform: scaleX(1); }
+
+        .visual-demo.animate-lv3-1 .total-result-card { animation: popCard 0.8s ease 1.6s forwards; }
+        .visual-demo.animate-lv3-2 .total-result-card { animation: popCard 0.8s ease 1.2s forwards; }
+
+        /* 第四關/第五關/第六關：容器動畫樣式 */
+        .bucket-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 15px auto;
+            max-width: 480px;
+        }
+
+        .bucket-card {
+            background: #ffffff;
+            border: 3px solid #fdcb6e;
+            border-radius: 12px;
+            padding: 10px 6px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #2d3436;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .bucket-card.target-bucket {
+            border-color: #e83e8c;
+            background: #fff0f6;
+        }
+
+        .bucket-card.add-bucket {
+            border-color: #0984e3;
+            background: #e3f2fd;
+        }
+
+        .rem-flower-box {
+            background: #ffe3e3;
+            border: 2.5px dashed #ff6b6b;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-size: 17px;
+            font-weight: bold;
+            color: #c92a2a;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .add-item-box {
+            background: #e3f2fd;
+            border: 2.5px dashed #0984e3;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-size: 17px;
+            font-weight: bold;
+            color: #0284c7;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* 第四關餘數飛入動畫 */
+        .visual-demo.animate-lv4 .rem-flower-box {
+            animation: flyToBucketLV4 1.2s ease 1.0s forwards;
+        }
+
+        .visual-demo.animate-lv4 .bucket-card.target-bucket {
+            animation: highlightBucketLV4 0.6s ease 2.2s forwards;
+        }
+
+        .visual-demo.animate-lv4 .total-result-card {
+            animation: popCard 0.8s ease 2.6s forwards;
+        }
+
+        /* 第五關/第六關補滿動畫 */
+        .visual-demo.animate-lv5 .add-item-box, .visual-demo.animate-lv6 .add-item-box {
+            animation: flyToBucketLV5 1.2s ease 1.0s forwards;
+        }
+
+        .visual-demo.animate-lv5 .bucket-card.add-bucket, .visual-demo.animate-lv6 .bucket-card.add-bucket {
+            animation: highlightBucketLV5 0.6s ease 2.2s forwards;
+        }
+
+        .visual-demo.animate-lv5 .total-result-card, .visual-demo.animate-lv6 .total-result-card {
+            animation: popCard 0.8s ease 2.6s forwards;
+        }
+
+        @keyframes flyToBucketLV4 {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(50px) scale(1.1); opacity: 0.9; }
+            100% { transform: translateY(100px) scale(0); opacity: 0; }
+        }
+
+        @keyframes highlightBucketLV4 {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); background: #ffdeeb; border-color: #d63384; }
+            100% { transform: scale(1.05); background: #ffdeeb; border-color: #d63384; }
+        }
+
+        @keyframes flyToBucketLV5 {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(50px) scale(1.1); opacity: 0.9; }
+            100% { transform: translateY(100px) scale(0); opacity: 0; }
+        }
+
+        @keyframes highlightBucketLV5 {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); background: #d0ebff; border-color: #1c7ed6; }
+            100% { transform: scale(1.05); background: #d0ebff; border-color: #1c7ed6; }
+        }
+
+        /* 思考口訣區塊樣式 */
+        .strategy-summary-box {
+            background: #ffffff;
+            border: 3.5px solid #6c5ce7;
+            border-radius: 20px;
+            padding: 18px;
+            margin-top: 18px;
+            text-align: left;
+            font-size: 16px;
+            line-height: 1.6;
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.12);
+        }
+
+        .strategy-summary-box h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #6c5ce7;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .easy-rule-card {
+            background: #f8f9fa;
+            border-radius: 14px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .easy-rule-card.more {
+            border-color: #2ecc71;
+            background: #f0fdf4;
+        }
+
+        .easy-rule-card.less {
+            border-color: #0984e3;
+            background: #f0f9ff;
+        }
+
+        .rule-title-tag {
+            display: inline-block;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 4px 12px;
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .rule-title-tag.more-bg { background: #2ecc71; }
+        .rule-title-tag.less-bg { background: #0984e3; }
+
+        .visual-formula-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-weight: bold;
+            font-size: 17px;
+            flex-wrap: wrap;
+        }
+
+        .box-icon-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: white;
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 2px solid #cbd5e1;
+            font-size: 15px;
+        }
+
+        .highlight-num {
+            color: #d63031;
+            font-weight: 900;
+            font-size: 20px;
+        }
+
+        @keyframes popCard { 0% { opacity: 0; transform: translateY(15px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        .start-btn { display: block; margin: 15px auto 0; background: #00b894; box-shadow: 0 6px 15px rgba(0, 184, 148, 0.4); }
+        .start-btn:hover { background: #00a182; }
+
+        @keyframes popIn { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h1>🎒 三年級乘除法應用題混合挑戰</h1>
+    
+    <div class="header-info">
+        <div class="badge">關卡：第 <span id="lv-num">1</span> 關 (<span id="lv-title">混合挑戰</span>)</div>
+        <div class="badge progress">進度：第 <span id="q-curr">1</span> / <span id="q-total">10</span> 題</div>
+        <div class="badge score">得分：<span id="score">0</span></div>
+        <button class="switch-lv-btn" onclick="openLevelSelect()">🎯 切換關卡</button>
+    </div>
+    
+    <div class="problem-card" id="problem-text">按「開始混合挑戰」開始作答！</div>
+
+    <div class="main-workspace">
+        <div class="left-panel">
+            <!-- 橫式輸入區 -->
+            <div style="width: 100%;">
+                <div style="font-size: 16px; font-weight: bold; color: #0984e3; margin-bottom: 6px;">請寫出完整的橫式算式：</div>
+                <div class="equation-wrapper">
+                    <input type="text" id="eq-rect-input" class="single-rect-input" readonly>
+                    <span id="eq-status-icon" class="status-icon"></span>
+                </div>
+            </div>
+
+            <!-- 第二階段：答案、答句與除法直式區 -->
+            <div id="step2-area" style="display: none; flex-direction: column; align-items: center; gap: 12px; width: 100%; margin-top: 10px;">
+                <div class="equation-wrapper">
+                    <span style="color:#d63031; font-size: 28px; font-weight: bold;">＝</span>
+                    <input type="text" id="in-ans1" class="single-rect-input" style="max-width: 260px;" readonly>
+                </div>
+
+                <div class="statement-row" id="statement-box"></div>
+
+                <!-- 動態除法直式容器 -->
+                <div class="long-division-container" id="long-div-box">
+                    <div class="long-div-title">✏️ 請完成除法直式：</div>
+                    <div id="long-div-grid-wrapper" class="long-div-grid"></div>
+                </div>
+            </div>
+
+            <button id="main-btn" class="action-btn" onclick="handleButtonClick()">檢查橫式</button>
+            <div id="feedback" class="msg"></div>
+        </div>
+
+        <div class="keypad-panel">
+            <div class="keypad-title">⌨️ 點擊輸入鍵盤</div>
+            <div class="keypad-grid">
+                <button class="key-btn" onclick="keypadPress('7')">7</button>
+                <button class="key-btn" onclick="keypadPress('8')">8</button>
+                <button class="key-btn" onclick="keypadPress('9')">9</button>
+                <button class="key-btn op-key" onclick="keypadPress('÷')">÷</button>
+
+                <button class="key-btn" onclick="keypadPress('4')">4</button>
+                <button class="key-btn" onclick="keypadPress('5')">5</button>
+                <button class="key-btn" onclick="keypadPress('6')">6</button>
+                <button class="key-btn op-key" onclick="keypadPress('×')">×</button>
+
+                <button class="key-btn" onclick="keypadPress('1')">1</button>
+                <button class="key-btn" onclick="keypadPress('2')">2</button>
+                <button class="key-btn" onclick="keypadPress('3')">3</button>
+                <button class="key-btn op-key" onclick="keypadPress('＋')">＋</button>
+
+                <button class="key-btn" onclick="keypadPress('0')">0</button>
+                <button class="key-btn func-key" onclick="keypadPress('.')">.</button>
+                <button class="key-btn func-key" onclick="keypadPress('BACK')">⌫</button>
+                <button class="key-btn func-key" onclick="keypadPress('CLEAR')">C</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 混合挑戰開始 Modal -->
+<div id="level-select-modal" class="modal-overlay">
+    <div class="modal-box" style="text-align:center;">
+        <h2>🎯 三年級乘除法應用題混合挑戰</h2>
+        <p style="font-size:20px;line-height:1.7;color:#2c3e50;">
+            每回合共 10 題：<b style="color:#0984e3;">乘法應用題 6 題</b>＋<b style="color:#d63031;">除法應用題 4 題</b>。<br>
+            請先列出正確橫式，再輸入答案。
+        </p>
+        <button class="action-btn start-btn" onclick="selectLevel(1)">開始混合挑戰！</button>
+    </div>
+</div>
+
+<!-- 通關 Modal -->
+
+
+
+
+
+
+
+
+
+
+<div id="game-win-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-box" style="text-align: center;">
+        <h2>🏆 恭喜成為【乘除法應用題大師】！</h2>
+        <p style="font-size: 20px; color:#2c3e50; margin: 20px 0;">你完成了 6 題乘法及 4 題除法應用題！</p>
+        <p style="font-size: 26px; font-weight: bold; color: #2ecc71;" id="final-stats"></p>
+        <button class="action-btn start-btn" onclick="openLevelSelect()">回到關卡選單 🎯</button>
+    </div>
+</div>
+
+<script>
+    let currentLevel = 1;
+    let currentQIndex = 0;
+    let totalQuestions = 10;
+    let score = 0;
+
+    let currentQData = null;
+    let isStep1Passed = false;
+    let hasErroredThisQuestion = false;
+
+    let demoCountdown = 10;
+    let demoTimerInterval = null;
+    let lvSeqTimeout = null;
+
+    let activeInputId = 'eq-rect-input';
+
+    let seenQuestionsHistory = JSON.parse(localStorage.getItem('seenQuestionsHistory') || '{}');
+
+    const categorizedBanks = {
+        chain: [], remainder: [], exact: [],
+        lv2_2digit_min: [], lv2_2digit_max: [], lv2_3digit_min: [], lv2_3digit_max: [],
+        lv3_first_is_half: [], lv3_second_is_half: [], lv3_first_is_multi: [], lv3_second_is_multi: [],
+        lv4_remainder_put_in: [],
+        lv5_add_more: [],
+        lv6_lack_more: []
+    };
+
+    const levelQuestionBanks = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [] };
+
+    function initMultiplicationQuestionBanks() {
+        // ===== 第一關：找原有 =====
+        const l1Formats = [
+            (role, item, unit, n1, n2) => ({
+                text: `${role}把${item}分給 ${n2} 個小朋友，每人分得 ${n1} ${unit}。${role}原有${item}多少${unit}？`,
+                prefix: `${role}原有${item}`
+            }),
+            (role, item, unit, n1, n2) => ({
+                text: `${role}把一批${item}打包裝箱，一共裝了 ${n2} 箱，每箱有 ${n1} ${unit}。這批${item}原本有多少${unit}？`,
+                prefix: `原本有${item}`
+            }),
+            (role, item, unit, n1, n2) => ({
+                text: `活動中，${role}將${item}平均分成 ${n2} 組，每組剛好分得 ${n1} ${unit}。請問原本共有多少${unit}${item}？`,
+                prefix: `原本共有${item}`
+            }),
+            (role, item, unit, n1, n2) => ({
+                text: `${role}採購了 ${n2} 包${item}，每包裡面裝有 ${n1} ${unit}。請問一共採購了多少${unit}${item}？`,
+                prefix: `一共採購了${item}`
+            })
+        ];
+
+        const roles1 = ["老師", "農夫", "麵包店師傅", "水果店店員", "義工", "班長", "媽媽", "社工隊員"];
+        const items1 = [
+            { item: "手工紙", unit: "張" }, { item: "蘋果", unit: "個" },
+            { item: "蛋撻", unit: "個" }, { item: "橙", unit: "個" },
+            { item: "禮物包", unit: "包" }, { item: "貼紙", unit: "張" },
+            { item: "鉛筆", unit: "枝" }, { item: "餅乾", unit: "塊" }
+        ];
+        const num1s1 = [12, 14, 15, 16, 18, 20, 24, 25, 30, 32, 35, 40, 45, 50];
+        const num2s1 = [3, 4, 5, 6, 7, 8, 9];
+
+        roles1.forEach(role => {
+            items1.forEach(it => {
+                num1s1.forEach(n1 => {
+                    num2s1.forEach(n2 => {
+                        const fmtIndex = (n1 + n2) % l1Formats.length;
+                        const data = l1Formats[fmtIndex](role, it.item, it.unit, n1, n2);
+                        levelQuestionBanks[1].push({
+                            text: data.text,
+                            num1: n1, num2: n2, ans: n1 * n2,
+                            isThreeNum: false,
+                            prefix: data.prefix, unit: it.unit
+                        });
+                    });
+                });
+            });
+        });
+
+        // ===== 第二關：來回問題 (3數連乘) =====
+        const l2Formats = [
+            (p, d, c) => ({
+                text: `${p.desc} ${d} ${p.unit}。${p.name}來回${p.act}了 ${c} 次，他共${p.act}了多少${p.unit}？`,
+                prefix: `${p.name}共${p.act}了`
+            }),
+            (p, d, c) => ({
+                text: `${p.name}在${p.desc}（單程 ${d} ${p.unit}）進行訓練，他連續往返${p.act}了 ${c} 趟，累計總長度是多少${p.unit}？`,
+                prefix: `累計總長度是`
+            }),
+            (p, d, c) => ({
+                text: `從起點到目的地單程距離為 ${d} ${p.unit}。${p.name}今天來回${p.act}了 ${c} 次，請問他一共走了多少${p.unit}？`,
+                prefix: `一共走了`
+            })
+        ];
+
+        const places2 = [
+            { desc: "泳池長", name: "柏康", act: "游", unit: "米" },
+            { desc: "跑道一趟長", name: "小明", act: "跑", unit: "米" },
+            { desc: "單程距離是", name: "波波", act: "走", unit: "米" },
+            { desc: "球場長度為", name: "小華", act: "練跑", unit: "米" },
+            { desc: "登山步道單程長", name: "健太", act: "來回爬", unit: "米" }
+        ];
+        const dists2 = [15, 20, 25, 30, 35, 40, 45, 50, 60, 80];
+        const counts2 = [3, 4, 5, 6, 7, 8, 9];
+
+        places2.forEach(p => {
+            dists2.forEach(d => {
+                counts2.forEach(c => {
+                    const fmtIdx = (d + c) % l2Formats.length;
+                    const data = l2Formats[fmtIdx](p, d, c);
+                    levelQuestionBanks[2].push({
+                        text: data.text, num1: d, num2: 2, num3: c, ans: d * 2 * c,
+                        isThreeNum: true,
+                        prefix: data.prefix, unit: p.unit
+                    });
+                });
+            });
+        });
+
+        // ===== 第三關：倍數問題 =====
+        const l3Formats = [
+            (b, m, a, bObj, u) => ({
+                text: `${a}有 ${b} ${u}，${bObj}的數量是${a}的 ${m} 倍。${bObj}有多少${u}？`,
+                prefix: `${bObj}有`, unit: u
+            }),
+            (b, m, a, bObj, u) => ({
+                text: `${a}售價是 ${b} 元，${bObj}的價格剛好是${a}的 ${m} 倍。買一份${bObj}需要多少元？`,
+                prefix: `買${bObj}需要`, unit: "元"
+            }),
+            (b, m, a, bObj, u) => ({
+                text: `${a}長 ${b} ${u}，${bObj}的長度比${a}長 ${m} 倍。請問${bObj}長多少${u}？`,
+                prefix: `${bObj}長`, unit: u
+            }),
+            (b, m, a, bObj, u) => ({
+                text: `${a}每天看書 ${b} 頁，${bObj}每天看的頁數是${a}的 ${m} 倍。${bObj}一天看多少頁？`,
+                prefix: `${bObj}一天看`, unit: "頁"
+            })
+        ];
+
+        const baseAmounts3 = [12, 14, 15, 16, 18, 20, 24, 25, 30, 32, 40, 50];
+        const multipliers3 = [3, 4, 5, 6, 7, 8, 9];
+        const subjects3 = [
+            { a: "哥哥的蘋果", bObj: "爸爸的蘋果", u: "個" },
+            { a: "紅絲帶", bObj: "藍絲帶", u: "厘米" },
+            { a: "兒童門票", bObj: "成人門票", u: "元" },
+            { a: "弟弟的積木", bObj: "姐姐的積木", u: "塊" },
+            { a: "小華的郵票", bObj: "小麗的郵票", u: "張" }
+        ];
+
+        baseAmounts3.forEach(b => {
+            multipliers3.forEach(m => {
+                subjects3.forEach(s => {
+                    const fmtIdx = (b + m) % l3Formats.length;
+                    const data = l3Formats[fmtIdx](b, m, s.a, s.bObj, s.u);
+                    levelQuestionBanks[3].push({
+                        text: data.text, num1: b, num2: m, ans: b * m,
+                        isThreeNum: false,
+                        prefix: data.prefix, unit: data.unit
+                    });
+                });
+            });
+        });
+
+        // ===== 第四關：多餘資料 =====
+        const l4Formats = [
+            (t, m, d) => ({
+                text: `每套文具套裝有鉛筆 ${t} 枝、直尺 ${d} 把。${m} 套文具套裝共有鉛筆多少枝？`,
+                prefix: "共有鉛筆", unit: "枝"
+            }),
+            (t, m, d) => ({
+                text: `水果店有西瓜 ${d} 個，蘋果 ${m} 箱。如果每箱蘋果有 ${t} 個，水果店共有蘋果多少個？`,
+                prefix: "共有蘋果", unit: "個"
+            }),
+            (t, m, d) => ({
+                text: `${d} 歲的小明去書店買筆記本，每本筆記本售 ${t} 元，他買了 ${m} 本，一共要付多少元？`,
+                prefix: "一共要付", unit: "元"
+            }),
+            (t, m, d) => ({
+                text: `每包餅乾重 ${d} 克，內有餅乾 ${t} 塊。小華買了 ${m} 包，一共有餅乾多少塊？`,
+                prefix: "一共有餅乾", unit: "塊"
+            }),
+            (t, m, d) => ({
+                text: `展覽會門票每張 ${t} 元。${d} 歲的李先生帶著 ${m} 名兒童入場，購買兒童票共須付多少元？`,
+                prefix: "購買兒童票共須付", unit: "元"
+            })
+        ];
+
+        const targets4 = [12, 15, 18, 20, 24, 25, 30, 50];
+        const mults4 = [3, 4, 5, 6, 7, 8];
+        const distractors4 = [2, 3, 7, 9, 10, 12, 100];
+
+        targets4.forEach(t => {
+            mults4.forEach(m => {
+                distractors4.forEach(d => {
+                    const fmtIdx = (t + m + d) % l4Formats.length;
+                    const data = l4Formats[fmtIdx](t, m, d);
+                    levelQuestionBanks[4].push({
+                        text: data.text, num1: t, num2: m, ans: t * m,
+                        isThreeNum: false,
+                        prefix: data.prefix, unit: data.unit
+                    });
+                });
+            });
+        });
+
+        // ===== 第五關：我和同學 (人數算式 + 連乘) =====
+        const l5FormatsA = [
+            (p, f, name) => ({
+                text: `花生每包 ${p} 元，${name}和 ${f} 位同學各買一包，共需付多少元？`,
+                prefix: "共需付", unit: "元"
+            }),
+            (p, f, name) => ({
+                text: `博物館門票每張 ${p} 元，我和 ${f} 名同學一起入場參觀，我們買門票一共花了多少元？`,
+                prefix: "一共花了", unit: "元"
+            }),
+            (p, f, name) => ({
+                text: `比賽中每人獲發獎金 ${p} 元，${name}與 ${f} 位組員組成一隊，全組共拿到多少獎金？`,
+                prefix: "全組共拿到", unit: "元"
+            })
+        ];
+
+        const l5FormatsB = [
+            (bp, m, f, name) => ({
+                text: `每包花生的售價是薯片的 ${m} 倍。薯片每包售 ${bp} 元，${name}和 ${f} 個同學各買了一包花生，他們共需付多少元？`,
+                prefix: "他們共需付", unit: "元"
+            }),
+            (bp, m, f, name) => ({
+                text: `模型車的價格是積木的 ${m} 倍。積木一盒 ${bp} 元，我和 ${f} 位同學每人買了一盒模型車，我們一共花了多少元？`,
+                prefix: "我們一共花了", unit: "元"
+            })
+        ];
+
+        const prices5 = [12, 15, 18, 20, 24, 25, 28, 30, 35, 40];
+        const friends5 = [2, 3, 4, 5, 6, 7, 8, 9];
+        const names5 = ["柏康", "小明", "健太", "波波", "小華", "美美"];
+
+        prices5.forEach(p => {
+            friends5.forEach(f => {
+                const name = names5[f % names5.length];
+                const fmtIdx = (p + f) % l5FormatsA.length;
+                const data = l5FormatsA[fmtIdx](p, f, name);
+                levelQuestionBanks[5].push({
+                    text: data.text, num1: p, num2: 1 + f, ans: p * (1 + f),
+                    isThreeNum: false, prefix: data.prefix, unit: data.unit
+                });
+            });
+        });
+
+        const basePrices5B = [5, 6, 8, 10, 11, 12, 15];
+        const mults5B = [2, 3, 4, 5];
+        const friends5B = [2, 3, 4, 5, 6, 7];
+
+        basePrices5B.forEach(bp => {
+            mults5B.forEach(m => {
+                friends5B.forEach(f => {
+                    const name = names5[(bp + m) % names5.length];
+                    const fmtIdx = (bp + f) % l5FormatsB.length;
+                    const data = l5FormatsB[fmtIdx](bp, m, f, name);
+                    levelQuestionBanks[5].push({
+                        text: data.text, num1: bp, num2: m, num3: 1 + f, ans: bp * m * (1 + f),
+                        isThreeNum: true, prefix: data.prefix, unit: data.unit
+                    });
+                });
+            });
+        });
+
+        // ===== 第六關：一打/半打 (完全隱藏 12 / 6 提示) =====
+        const l6FormatsDozen = [
+            (item, unit, store, role, a) => ({
+                text: `${role}在${store}購買了 ${a} 打${item}，共有${item}多少${unit}？`,
+                prefix: `共有${item}`, unit: unit
+            }),
+            (item, unit, store, role, a) => ({
+                text: `${store}把${item}每 1 打包裝成一盒。店員賣出 ${a} 盒，共賣出${item}多少${unit}？`,
+                prefix: `共賣出${item}`, unit: unit
+            }),
+            (item, unit, store, role, a) => ({
+                text: `${role}買了 ${a} 盒${item}，如果每盒剛好裝 1 打，一共有${item}多少${unit}？`,
+                prefix: `一共有${item}`, unit: unit
+            })
+        ];
+
+        const l6FormatsHalf = [
+            (item, unit, store, role, a) => ({
+                text: `${role}買了 ${a} 盒${item}，每盒有半打，共有${item}多少${unit}？`,
+                prefix: `共有${item}`, unit: unit
+            }),
+            (item, unit, store, role, a) => ({
+                text: `每袋${item}裝有半打。媽媽買了 ${a} 袋，一共有${item}多少${unit}？`,
+                prefix: `一共有${item}`, unit: unit
+            }),
+            (item, unit, store, role, a) => ({
+                text: `${store}把${item}每半打分裝成一包。顧客購買了 ${a} 包，共有${item}多少${unit}？`,
+                prefix: `共有${item}`, unit: unit
+            })
+        ];
+
+        const l6FormatsMulti = [
+            (item, unit, boxItem, d) => ({
+                text: `每個紙盒可裝${item} ${boxItem} ${unit}。餅店準備了 ${d} 打紙盒，最多可裝${item}多少${unit}？`,
+                prefix: `最多可裝${item}`, unit: unit
+            }),
+            (item, unit, boxItem, d) => ({
+                text: `每托盤可放${item} ${boxItem} ${unit}。餐廳買入托盤 ${d} 打，最多可放${item}多少${unit}？`,
+                prefix: `最多可放${item}`, unit: unit
+            })
+        ];
+
+        const singleNums6 = [2, 3, 4, 5, 6, 7, 8, 9];
+        const items6List = [
+            { item: "雞蛋", unit: "隻", store: "超市", role: "媽媽" },
+            { item: "鉛筆", unit: "枝", store: "文具店", role: "老師" },
+            { item: "蛋撻", unit: "個", store: "餅店", role: "爸爸" },
+            { item: "手帕", unit: "條", store: "百貨公司", role: "小麗" },
+            { item: "蘋果", unit: "個", store: "水果店", role: "姨姨" }
+        ];
+
+        singleNums6.forEach(a => {
+            items6List.forEach((it, idx) => {
+                // 1 打題型 (隱藏12)
+                const fmtDIdx = (a + idx) % l6FormatsDozen.length;
+                const dataD = l6FormatsDozen[fmtDIdx](it.item, it.unit, it.store, it.role, a);
+                levelQuestionBanks[6].push({
+                    text: dataD.text, num1: 12, num2: a, ans: 12 * a,
+                    isThreeNum: false, prefix: dataD.prefix, unit: dataD.unit
+                });
+
+                // 半打題型 (隱藏6)
+                const fmtHIdx = (a + idx) % l6FormatsHalf.length;
+                const dataH = l6FormatsHalf[fmtHIdx](it.item, it.unit, it.store, it.role, a);
+                levelQuestionBanks[6].push({
+                    text: dataH.text, num1: 6, num2: a, ans: 6 * a,
+                    isThreeNum: false, prefix: dataH.prefix, unit: dataH.unit
+                });
+            });
+        });
+
+        // 3數連乘 (含打數)
+        const boxItems6 = [2, 3, 4, 5, 6, 7, 8, 9];
+        const dozens6 = [2, 3, 4, 5, 6, 7, 8];
+
+        boxItems6.forEach(itemCount => {
+            dozens6.forEach(d => {
+                const fmtIdx = (itemCount + d) % l6FormatsMulti.length;
+                const dataM = l6FormatsMulti[fmtIdx]("西餅", "件", itemCount, d);
+                levelQuestionBanks[6].push({
+                    text: dataM.text, num1: itemCount, num2: 12, num3: d, ans: itemCount * 12 * d,
+                    isThreeNum: true, prefix: dataM.prefix, unit: dataM.unit
+                });
+            });
+        });
+    }
+
+    let sessionQuestions = [];
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function initQuestionBanks() {
+        categorizedBanks.chain = [];
+        categorizedBanks.remainder = [];
+        categorizedBanks.exact = [];
+        categorizedBanks.lv2_2digit_min = [];
+        categorizedBanks.lv2_2digit_max = [];
+        categorizedBanks.lv2_3digit_min = [];
+        categorizedBanks.lv2_3digit_max = [];
+        categorizedBanks.lv3_first_is_half = [];
+        categorizedBanks.lv3_second_is_half = [];
+        categorizedBanks.lv3_first_is_multi = [];
+        categorizedBanks.lv3_second_is_multi = [];
+        categorizedBanks.lv4_remainder_put_in = [];
+        categorizedBanks.lv5_add_more = [];
+        categorizedBanks.lv6_lack_more = [];
+
+        const roles = ["店員", "花店師傅", "義工", "媽媽", "老師", "班長", "店主"];
+        const items = [
+            { item: "襟花", container: "盒子", unit: "個" },
+            { item: "百合", container: "花瓶", unit: "枝" },
+            { item: "蘋果", container: "籃子", unit: "個" },
+            { item: "糖果", container: "禮盒", unit: "粒" },
+            { item: "鉛筆", container: "筆筒", unit: "枝" }
+        ];
+
+        // 1. 第一關題庫生成
+        roles.forEach(role => {
+            items.forEach(it => {
+                [3, 4, 5, 6, 7, 8, 9].forEach(d => {
+                    [12, 14, 15, 18, 24, 25, 32, 35, 42, 45, 52, 64].forEach(q => {
+                        [0, 1, 2, 3].forEach(rem => {
+                            if (rem >= d) return;
+                            let total = q * d + rem;
+                            if (total >= 30 && total <= 999) {
+                                const qObj = {
+                                    text: rem === 0 ? 
+                                        `${role}有 ${it.item} ${total} ${it.unit}，平均分給 ${d} 個小朋友，每人分得多少${it.unit}？` :
+                                        `${role}有 ${it.item} ${total} ${it.unit}，平均分給 ${d} 個小朋友，每人分得多少${it.unit}？還餘下多少${it.unit}？`,
+                                    isThreeNum: false,
+                                    num1: total, num2: d, ansQuotient: q, ansRemainder: rem,
+                                    prefix: `每人分得${it.item}`, unit: it.unit,
+                                    finalAns: q, isMultiply: false
+                                };
+                                if (rem === 0) categorizedBanks.exact.push(qObj);
+                                else categorizedBanks.remainder.push(qObj);
+                            }
+                        });
+                    });
+                });
+            });
+        });
+
+        roles.forEach(role => {
+            items.forEach(it => {
+                [2, 3, 4].forEach(d1 => {
+                    [3, 4, 5].forEach(d2 => {
+                        [10, 12, 15, 20].forEach(ans => {
+                            let total = ans * d1 * d2;
+                            categorizedBanks.chain.push({
+                                text: `${role}買了 ${total} ${it.unit}${it.item}，平均分給 ${d1} 個年級，每個年級有 ${d2} 班，每班分得多少${it.unit}？`,
+                                isThreeNum: true,
+                                num1: total, num2: d1, num3: d2, ansQuotient: ans, ansRemainder: 0,
+                                prefix: `每班分得${it.item}`, unit: it.unit,
+                                finalAns: ans, isMultiply: false
+                            });
+                        });
+                    });
+                });
+            });
+        });
+
+        // 2. 第二關題庫生成
+        const minScenarios = [
+            { t: "位朋友乘坐的士前往飯店，每架坐", u1: "人", u2: "架", p: "最少要的士" },
+            { t: "名學生參加校外參觀，每輛小型巴士可載", u1: "人", u2: "輛", p: "最少要小型巴士" },
+            { t: "個果汁塔需要裝箱，每個箱子最多可裝", u1: "個", u2: "個", p: "最少要箱子" },
+            { t: "頁的相冊需要整理，每頁最多可貼", u1: "張相片", u2: "頁", p: "最少要相冊" }
+        ];
+
+        minScenarios.forEach(sc => {
+            [4, 5, 6, 7, 8].forEach(d => {
+                [4, 5, 6, 7, 8, 12, 15].forEach(q => {
+                    [1, 2, 3].forEach(rem => {
+                        if (rem >= d) return;
+                        let total = q * d + rem;
+                        if (total >= 20 && total <= 99) {
+                            categorizedBanks.lv2_2digit_min.push({
+                                text: `${total} ${sc.t} ${d} ${sc.u1}，最少要${sc.p.replace('最少要', '')}多少${sc.u2}？`,
+                                isThreeNum: false, num1: total, num2: d, ansQuotient: q, ansRemainder: rem,
+                                prefix: sc.p, unit: sc.u2, finalAns: q + 1, isMultiply: false
+                            });
+                        }
+                    });
+                });
+                [22, 25, 32, 35, 42, 45, 52].forEach(q => {
+                    [1, 2, 3].forEach(rem => {
+                        if (rem >= d) return;
+                        let total = q * d + rem;
+                        if (total >= 100 && total <= 999) {
+                            categorizedBanks.lv2_3digit_min.push({
+                                text: `${total} ${sc.t} ${d} ${sc.u1}，最少要${sc.p.replace('最少要', '')}多少${sc.u2}？`,
+                                isThreeNum: false, num1: total, num2: d, ansQuotient: q, ansRemainder: rem,
+                                prefix: sc.p, unit: sc.u2, finalAns: q + 1, isMultiply: false
+                            });
+                        }
+                    });
+                });
+            });
+        });
+
+        const maxScenarios = [
+            { t: "張卡紙，做一枝紙花需要", u1: "張", u2: "枝", p: "最多可做紙花" },
+            { t: "元，膠珠每串售", u1: "元", u2: "串", p: "最多可買膠珠" },
+            { t: "厘米的彩帶，剪成每段長", u1: "厘米", u2: "段", p: "最多可剪成" },
+            { t: "塊餅乾，每袋裝", u1: "塊", u2: "袋", p: "最多可裝成" }
+        ];
+
+        maxScenarios.forEach(sc => {
+            [4, 5, 6, 7, 8].forEach(d => {
+                [3, 4, 5, 6, 7, 11, 14].forEach(q => {
+                    [1, 2, 3].forEach(rem => {
+                        if (rem >= d) return;
+                        let total = q * d + rem;
+                        if (total >= 20 && total <= 99) {
+                            categorizedBanks.lv2_2digit_max.push({
+                                text: `現有 ${total} ${sc.t} ${d} ${sc.u1}，最多可${sc.p.replace('最多可', '')}多少${sc.u2}？`,
+                                isThreeNum: false, num1: total, num2: d, ansQuotient: q, ansRemainder: rem,
+                                prefix: sc.p, unit: sc.u2, finalAns: q, isMultiply: false
+                            });
+                        }
+                    });
+                });
+                [21, 24, 31, 34, 41, 44, 51].forEach(q => {
+                    [1, 2, 3].forEach(rem => {
+                        if (rem >= d) return;
+                        let total = q * d + rem;
+                        if (total >= 100 && total <= 999) {
+                            categorizedBanks.lv2_3digit_max.push({
+                                text: `現有 ${total} ${sc.t} ${d} ${sc.u1}，最多可${sc.p.replace('最多可', '')}多少${sc.u2}？`,
+                                isThreeNum: false, num1: total, num2: d, ansQuotient: q, ansRemainder: rem,
+                                prefix: sc.p, unit: sc.u2, finalAns: q, isMultiply: false
+                            });
+                        }
+                    });
+                });
+            });
+        });
+
+        // 3. 第三關題庫生成
+        const pairs = [
+            { first: "蘋果樹", second: "橙樹", unit: "棵" },
+            { first: "紅花", second: "黃花", unit: "朵" },
+            { first: "小明的故事書", second: "小麗的故事書", unit: "本" },
+            { first: "男生人數", second: "女生人數", unit: "人" },
+            { first: "籃球", second: "排球", unit: "個" },
+            { first: "綠色彩帶", second: "藍色彩帶", unit: "條" }
+        ];
+
+        pairs.forEach(p => {
+            [12, 18, 24, 36, 48, 120, 216, 320, 450].forEach(val => {
+                categorizedBanks.lv3_first_is_half.push({
+                    text: `場地有 ${p.first} ${val} ${p.unit}，${p.first}的數量是${p.second}的一半。場地有${p.second}多少${p.unit}？`,
+                    isThreeNum: false, num1: val, num2: 2, ansQuotient: val * 2, ansRemainder: 0,
+                    prefix: `${p.second}有`, unit: p.unit, finalAns: val * 2, isMultiply: true, opSymbol: '×'
+                });
+
+                if (val % 2 === 0) {
+                    categorizedBanks.lv3_second_is_half.push({
+                        text: `場地有 ${p.first} ${val} ${p.unit}，${p.second}的數量是${p.first}的一半。場地有${p.second}多少${p.unit}？`,
+                        isThreeNum: false, num1: val, num2: 2, ansQuotient: val / 2, ansRemainder: 0,
+                        prefix: `${p.second}有`, unit: p.unit, finalAns: val / 2, isMultiply: false, opSymbol: '÷'
+                    });
+                }
+
+                [3, 4, 5].forEach(k => {
+                    categorizedBanks.lv3_first_is_multi.push({
+                        text: `學校有 ${p.first} ${val * k} ${p.unit}，${p.first}的數量是${p.second}的 ${k} 倍。學校有${p.second}多少${p.unit}？`,
+                        isThreeNum: false, num1: val * k, num2: k, ansQuotient: val, ansRemainder: 0,
+                        prefix: `${p.second}有`, unit: p.unit, finalAns: val, isMultiply: false, opSymbol: '÷'
+                    });
+
+                    categorizedBanks.lv3_second_is_multi.push({
+                        text: `學校有 ${p.first} ${val} ${p.unit}，${p.second}的數量是${p.first}的 ${k} 倍。學校有${p.second}多少${p.unit}？`,
+                        isThreeNum: false, num1: val, num2: k, ansQuotient: val * k, ansRemainder: 0,
+                        prefix: `${p.second}有`, unit: p.unit, finalAns: val * k, isMultiply: true, opSymbol: '×'
+                    });
+                });
+            });
+        });
+
+        // 4. 第四關題庫生成
+        roles.forEach(role => {
+            items.forEach(it => {
+                [5, 6, 7, 8, 9].forEach(containerCount => {
+                    [11, 12, 14, 15, 21, 23, 25, 32].forEach(q => {
+                        [1, 2, 3, 4].forEach(rem => {
+                            if (rem >= containerCount) return;
+                            let total = q * containerCount + rem;
+                            categorizedBanks.lv4_remainder_put_in.push({
+                                text: `${role}把 ${total} 個${it.item}平均放在 ${containerCount} 個${it.container}內，並把餘下的${it.item}全部放在其中一個${it.container}內。這個${it.container}內共有${it.item}多少個？`,
+                                isThreeNum: false,
+                                num1: total, num2: containerCount, ansQuotient: q, ansRemainder: rem,
+                                prefix: `這個${it.container}內共有${it.item}`, unit: it.unit,
+                                finalAns: q + rem, isMultiply: false
+                            });
+                        });
+                    });
+                });
+            });
+        });
+
+        // 5. 第五關題庫生成：【最少要增加……（容量 - 餘數）】
+        roles.forEach(role => {
+            items.forEach(it => {
+                [3, 4, 5, 6, 7, 8].forEach(boxCap => {
+                    [6, 12, 15, 16, 22, 25, 31, 34, 42].forEach(q => {
+                        [1, 2, 3, 4, 5, 6, 7].forEach(rem => {
+                            if (rem >= boxCap) return;
+                            let total = q * boxCap + rem;
+                            let needAdd = boxCap - rem;
+                            categorizedBanks.lv5_add_more.push({
+                                text: `${role}做了 ${total} 個${it.item}，每個${it.container}可放${it.item} ${boxCap} 個。如果每個${it.container}都要放${it.item} ${boxCap} 個，最少要添加${it.item}多少個？`,
+                                isThreeNum: false,
+                                num1: total,                     // 被除數
+                                num2: boxCap,                    // 除數
+                                ansQuotient: q,                  // 商數
+                                ansRemainder: rem,               // 餘數
+                                prefix: `最少要添加${it.item}`, 
+                                unit: it.unit,
+                                finalAns: needAdd,               // 答句最後答案
+                                isMultiply: false
+                            });
+                        });
+                    });
+                });
+            });
+        });
+
+        // 6. 第六關題庫生成：【生活應用綜合題（包裝缺額 / 購物尚欠 / 閱讀天數）】
+        
+        // 類型 A：包裝缺額（如原本題型）
+        const flowerTypes = [
+            { flower: "玫瑰", packName: "束", packCap: 6, capText: "半打", itemUnit: "枝" },
+            { flower: "百合", packName: "束", packCap: 12, capText: "一打", itemUnit: "枝" },
+            { flower: "巧克力", packName: "袋", packCap: 8, capText: "8 粒", itemUnit: "粒" },
+            { flower: "軟糖", packName: "袋", packCap: 6, capText: "6 粒", itemUnit: "粒" }
+        ];
+
+        roles.forEach(role => {
+            flowerTypes.forEach(ft => {
+                [15, 22, 28, 33, 45, 52, 65].forEach(q => {
+                    [1, 2, 3, 4, 5].forEach(rem => {
+                        if (rem >= ft.packCap) return;
+                        let total = q * ft.packCap + rem;
+                        let lack = ft.packCap - rem;
+                        categorizedBanks.lv6_lack_more.push({
+                            text: `${role}打算把 ${total} ${ft.itemUnit}${ft.flower}每${ft.capText}包裝成一${ft.packName}出售。還欠${ft.flower}多少${ft.itemUnit}才可多包裝一${ft.packName}？`,
+                            isThreeNum: false,
+                            num1: total,
+                            num2: ft.packCap,
+                            ansQuotient: q,
+                            ansRemainder: rem,
+                            prefix: `還欠${ft.flower}`,
+                            suffix: `${ft.itemUnit}才可多包裝一${ft.packName}。`,
+                            finalAns: lack,
+                            isMultiply: false
+                        });
+                    });
+                });
+            });
+        });
+
+        // 類型 B：購物尚欠金額（參考圖片 10：每枝原子筆售 9 元。老師付 950 元，尚欠多少元才足夠多買一枝？）
+        const shopItems = [
+            { name: "原子筆", unit: "枝", prices: [7, 8, 9, 12, 15] },
+            { name: "故事書", unit: "本", prices: [25, 32, 45, 58] },
+            { name: "模型車", unit: "架", prices: [35, 48, 65, 80] },
+            { name: "精裝日曆", unit: "本", prices: [18, 24, 36, 42] }
+        ];
+
+        const buyers = ["老師", "爸爸", "媽媽", "陳先生", "張小姐"];
+
+        buyers.forEach(buyer => {
+            shopItems.forEach(item => {
+                item.prices.forEach(price => {
+                    [12, 25, 45, 68, 85, 105].forEach(q => {
+                        [1, 2, 3, 4, 5].forEach(rem => {
+                            if (rem >= price) return;
+                            let money = q * price + rem;
+                            let lackMoney = price - rem;
+                            categorizedBanks.lv6_lack_more.push({
+                                text: `每${item.unit}${item.name}售 ${price} 元。${buyer}付 ${money} 元，最多可買${item.name}多少${item.unit}？尚欠多少元才足夠多買一${item.unit}${item.name}？`,
+                                isThreeNum: false,
+                                num1: money,
+                                num2: price,
+                                ansQuotient: q,
+                                ansRemainder: rem,
+                                prefix: `尚欠`,
+                                suffix: `元才足夠多買一${item.unit}${item.name}。`,
+                                finalAns: lackMoney,
+                                isMultiply: false
+                            });
+                        });
+                    });
+                });
+            });
+        });
+
+        // 類型 C：閱讀/做工程最少天數（參考圖片 11：故事書有 88 頁，每天看 6 頁。最少要用多少天才看完這本書？）
+        const readers = ["可晴", "小明", "子軒", "一心", "希童"];
+        readers.forEach(reader => {
+            [6, 7, 8, 9, 12, 15].forEach(perDay => {
+                [12, 14, 18, 22, 28, 35].forEach(q => {
+                    [1, 2, 3, 4, 5].forEach(rem => {
+                        if (rem >= perDay) return;
+                        let totalPages = q * perDay + rem;
+                        categorizedBanks.lv6_lack_more.push({
+                            text: `${reader}的故事書有 ${totalPages} 頁，她每天看 ${perDay} 頁。${reader}最少要用多少天才看完這本書？`,
+                            isThreeNum: false,
+                            num1: totalPages,
+                            num2: perDay,
+                            ansQuotient: q,
+                            ansRemainder: rem,
+                            prefix: `${reader}最少要用`,
+                            suffix: `天才看完這本書。`,
+                            finalAns: q + 1,
+                            isMultiply: false
+                        });
+                    });
+                });
+            });
+        });
+    }
+
+    function pickUnseenQuestions(sourceList, count, level) {
+        if (!seenQuestionsHistory[level]) seenQuestionsHistory[level] = [];
+        shuffleArray(sourceList);
+        let unseenList = sourceList.filter(q => !seenQuestionsHistory[level].includes(q.text));
+
+        if (unseenList.length < count) {
+            seenQuestionsHistory[level] = [];
+            unseenList = sourceList;
+            shuffleArray(unseenList);
+        }
+
+        let picked = unseenList.slice(0, count);
+        picked.forEach(q => seenQuestionsHistory[level].push(q.text));
+        localStorage.setItem('seenQuestionsHistory', JSON.stringify(seenQuestionsHistory));
+        return picked;
+    }
+
+    function generateSessionQuestions() {
+        const multiplicationPool = [];
+        // 每個乘法題庫各抽一題，涵蓋不同應用題型。
+        for (let level = 1; level <= 6; level++) {
+            const bank = [...levelQuestionBanks[level]];
+            shuffleArray(bank);
+            if (bank.length) multiplicationPool.push(bank[0]);
+        }
+        const multiplicationQuestions = multiplicationPool.slice(0, 6).map(q => ({
+            ...q,
+            ansQuotient: q.ans,
+            ansRemainder: 0,
+            finalAns: q.ans,
+            isMultiply: true,
+            isThreeNum: Boolean(q.isThreeNum),
+            opSymbol: '×',
+            questionType: '乘法'
+        }));
+
+        const divisionPool = [
+            ...categorizedBanks.chain,
+            ...categorizedBanks.remainder,
+            ...categorizedBanks.exact,
+            ...categorizedBanks.lv2_2digit_min,
+            ...categorizedBanks.lv2_2digit_max,
+            ...categorizedBanks.lv2_3digit_min,
+            ...categorizedBanks.lv2_3digit_max
+        ];
+        shuffleArray(divisionPool);
+        const divisionQuestions = divisionPool.slice(0, 4).map(q => ({ ...q, questionType: '除法' }));
+
+        sessionQuestions = [...multiplicationQuestions, ...divisionQuestions];
+        shuffleArray(sessionQuestions);
+        totalQuestions = 10;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        initQuestionBanks();
+        initMultiplicationQuestionBanks();
+    });
+
+    function registerInputEvents() {
+        document.querySelectorAll('input[type="text"]').forEach(el => {
+            el.addEventListener('focus', () => { activeInputId = el.id; });
+            el.addEventListener('click', () => { activeInputId = el.id; });
+        });
+    }
+
+    function keypadPress(key) {
+        const inputEl = document.getElementById(activeInputId);
+        if (!inputEl || inputEl.disabled) return;
+
+        if (key === 'CLEAR') {
+            inputEl.value = '';
+        } else if (key === 'BACK') {
+            inputEl.value = inputEl.value.slice(0, -1);
+        } else {
+            if (['＋', '－', '×', '÷'].includes(key)) {
+                if (activeInputId !== 'eq-rect-input') return;
+                inputEl.value += key;
+            } else {
+                inputEl.value += key;
+            }
+        }
+    }
+
+    function openLevelSelect() {
+        if (demoTimerInterval) clearInterval(demoTimerInterval);
+        if (lvSeqTimeout) clearTimeout(lvSeqTimeout);
+        document.getElementById('game-win-modal').style.display = 'none';
+        document.getElementById('level-select-modal').style.display = 'flex';
+    }
+
+    function selectLevel(lv) {
+        currentLevel = 1;
+        currentQIndex = 0;
+        totalQuestions = 10;
+        score = 0;
+        generateSessionQuestions();
+        document.getElementById('level-select-modal').style.display = 'none';
+        document.getElementById('game-win-modal').style.display = 'none';
+        loadQuestion();
+    }
+    function updateUI() {
+        document.getElementById('lv-num').innerText = currentLevel;
+        let titles = ["混合挑戰"];
+        document.getElementById('lv-title').innerText = titles[currentLevel - 1];
+        document.getElementById('q-curr').innerText = currentQIndex + 1;
+        document.getElementById('q-total').innerText = totalQuestions;
+        document.getElementById('score').innerText = score;
+    }
+
+    function buildLongDivisionGrid(dividend, divisor) {
+        const wrapper = document.getElementById('long-div-grid-wrapper');
+        const digitCount = String(dividend).length;
+        const quotient = Math.floor(dividend / divisor);
+
+        if (digitCount === 2) {
+            if (quotient < 10) {
+                wrapper.className = `long-div-grid digits-2-1step`;
+                wrapper.innerHTML = `
+                    <div></div><div></div><div></div>
+                    <input type="text" id="ld-q2" class="long-div-input" maxlength="1" readonly>
+                    <div class="long-div-line-2"></div>
+                    <input type="text" id="ld-divisor" class="long-div-input" maxlength="1" readonly>
+                    <span class="long-div-symbol">)</span>
+                    <input type="text" id="ld-dividend1" class="long-div-input" maxlength="1" readonly>
+                    <input type="text" id="ld-dividend2" class="long-div-input" maxlength="1" readonly>
+                    <div></div><div></div>
+                    <input type="text" id="ld-prod2_1" class="long-div-input" maxlength="1" readonly>
+                    <input type="text" id="ld-prod2_2" class="long-div-input" maxlength="1" readonly>
+                    <div class="long-div-bottomline-2"></div>
+                    <div></div><div></div><div></div>
+                    <input type="text" id="ld-remainder" class="long-div-input" maxlength="1" readonly>
+                `;
+            } else {
+                wrapper.className = `long-div-grid digits-2-2step`;
+                wrapper.innerHTML = `
+                    <div></div><div></div>
+                    <input type="text" id="ld-q1" class="long-div-input" maxlength="1" readonly>
+                    <input type="text" id="ld-q2" class="long-div-input" maxlength="1" readonly>
+                    <div class="long-div-line-2"></div>
+                    <input type="text" id="ld-divisor" class="long-div-input" maxlength="1" readonly>
+                    <span class="long-div-symbol">)</span>
+                    <input type="text" id="ld-dividend1" class="long-div-input" maxlength="1" readonly>
+                    <input type="text" id="ld-dividend2" class="long-div-input" maxlength="1" readonly>
+                    <div></div><div></div>
+                    <input type="text" id="ld-prod1" class="long-div-input" maxlength="1" readonly><div></div>
+                    <div class="long-div-subline-2"></div>
+                    <div></div><div></div>
+                    <input type="text" id="ld-sub1" class="long-div-input" maxlength="1" readonly>
+                    <input type="text" id="ld-sub2" class="long-div-input" maxlength="1" readonly>
+                    <div></div><div></div>
+                    <input type="text" id="ld-prod2_1" class="long-div-input" maxlength="1" readonly>
+                    <input type="text" id="ld-prod2_2" class="long-div-input" maxlength="1" readonly>
+                    <div class="long-div-bottomline-2"></div>
+                    <div></div><div></div><div></div>
+                    <input type="text" id="ld-remainder" class="long-div-input" maxlength="1" readonly>
+                `;
+            }
+        } else if (digitCount === 3) {
+            wrapper.className = `long-div-grid digits-3`;
+            wrapper.innerHTML = `
+                <div></div><div></div>
+                <input type="text" id="ld-q1" class="long-div-input" maxlength="1" readonly>
+                <input type="text" id="ld-q2" class="long-div-input" maxlength="1" readonly>
+                <input type="text" id="ld-q3" class="long-div-input" maxlength="1" readonly>
+                <div class="long-div-line-3"></div>
+                <input type="text" id="ld-divisor" class="long-div-input" maxlength="1" readonly>
+                <span class="long-div-symbol">)</span>
+                <input type="text" id="ld-dividend1" class="long-div-input" maxlength="1" readonly>
+                <input type="text" id="ld-dividend2" class="long-div-input" maxlength="1" readonly>
+                <input type="text" id="ld-dividend3" class="long-div-input" maxlength="1" readonly>
+                <div></div><div></div>
+                <input type="text" id="ld-prod1" class="long-div-input" maxlength="1" readonly>
+                <input type="text" id="ld-prod2" class="long-div-input" maxlength="1" readonly><div></div>
+                <div class="long-div-subline-3"></div>
+                <div></div><div></div><div></div>
+                <input type="text" id="ld-sub1" class="long-div-input" maxlength="1" readonly>
+                <input type="text" id="ld-sub2" class="long-div-input" maxlength="1" readonly>
+                <div></div><div></div><div></div>
+                <input type="text" id="ld-prod3_1" class="long-div-input" maxlength="1" readonly>
+                <input type="text" id="ld-prod3_2" class="long-div-input" maxlength="1" readonly>
+                <div class="long-div-bottomline-3"></div>
+                <div></div><div></div><div></div><div></div>
+                <input type="text" id="ld-remainder" class="long-div-input" maxlength="1" readonly>
+            `;
+        }
+    }
+
+    function loadQuestion() {
+        isStep1Passed = false;
+        hasErroredThisQuestion = false;
+        updateUI();
+
+        if (sessionQuestions.length === 0) {
+            generateSessionQuestions();
+        }
+
+        currentQData = sessionQuestions[currentQIndex % sessionQuestions.length];
+
+        document.getElementById('problem-text').innerText = currentQData.text;
+
+        const eqInput = document.getElementById('eq-rect-input');
+        eqInput.value = "";
+        eqInput.disabled = false;
+        document.getElementById('eq-status-icon').innerText = "";
+
+        document.getElementById('step2-area').style.display = 'none';
+        document.getElementById('in-ans1').value = "";
+        document.getElementById('in-ans1').disabled = false;
+
+        const longDivBox = document.getElementById('long-div-box');
+        if (currentQData.isThreeNum || currentQData.isMultiply) {
+            longDivBox.style.display = 'none';
+        } else {
+            longDivBox.style.display = 'flex';
+            buildLongDivisionGrid(currentQData.num1, currentQData.num2);
+        }
+
+        const statementBox = document.getElementById('statement-box');
+        let statementHtml = `<span>${currentQData.prefix}</span>`;
+        
+        if (currentLevel === 1 && currentQData.ansRemainder > 0) {
+            statementHtml += `
+                <input type="text" id="in-ans2" class="single-rect-input statement-input" readonly>
+                <span>${currentQData.unit}，餘下</span>
+                <input type="text" id="in-rem2" class="single-rect-input statement-input" readonly>
+                <span>${currentQData.unit}</span>
+            `;
+        } else if (currentLevel === 6) {
+            statementHtml += `
+                <input type="text" id="in-ans2" class="single-rect-input statement-input" readonly>
+                <span>${currentQData.suffix || currentQData.unit}</span>
+            `;
+        } else {
+            statementHtml += `
+                <input type="text" id="in-ans2" class="single-rect-input statement-input" readonly>
+                <span>${currentQData.unit}</span>
+            `;
+        }
+        
+        statementBox.innerHTML = statementHtml;
+
+        registerInputEvents();
+        activeInputId = 'eq-rect-input';
+
+        const btn = document.getElementById('main-btn');
+        btn.innerText = "檢查橫式";
+        btn.disabled = false;
+
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('feedback').style.color = "#2d3436";
+    }
+
+    function handleButtonClick() {
+        if (!isStep1Passed) {
+            checkStep1Equation();
+        } else {
+            checkStep2Answer();
+        }
+    }
+
+    function checkStep1Equation() {
+        const rawStr = document.getElementById('eq-rect-input').value.trim();
+        const msg = document.getElementById('feedback');
+        const statusIcon = document.getElementById('eq-status-icon');
+
+        if (!rawStr) {
+            statusIcon.innerText = "❌";
+            msg.style.color = "#d63031";
+            msg.innerText = "❌ 不正確，請改正！";
+            triggerErrorPenalty();
+            return;
+        }
+
+        const cleanStr = rawStr.replace(/\s+/g, '').replace(/÷/g, '/').replace(/×/g, '*').replace(/✕/g, '*').replace(/＋/g, '+');
+        const parts = cleanStr.split(/([\+\-\*/])/);
+
+        if (!currentQData.isThreeNum) {
+            if (parts.length !== 3) {
+                statusIcon.innerText = "❌";
+                msg.style.color = "#d63031";
+                msg.innerText = "❌ 不正確，請改正！";
+                triggerErrorPenalty();
+                return;
+            }
+
+            const n1 = parseInt(parts[0], 10);
+            const op = parts[1];
+            const n2 = parseInt(parts[2], 10);
+
+            let targetOp = currentQData.isMultiply ? '*' : '/';
+            const isOpCorrect = (op === targetOp);
+            
+            let isNumsCorrect = false;
+            if (currentQData.isMultiply) {
+                isNumsCorrect = (n1 === currentQData.num1 && n2 === currentQData.num2) || (n1 === currentQData.num2 && n2 === currentQData.num1);
+            } else {
+                isNumsCorrect = (n1 === currentQData.num1 && n2 === currentQData.num2);
+            }
+
+            if (isOpCorrect && isNumsCorrect) {
+                passStep1(statusIcon, msg, "🌟 橫式寫對了！請繼續算出答案：");
+            } else {
+                statusIcon.innerText = "❌";
+                triggerErrorPenalty();
+                msg.style.color = "#d63031";
+                msg.innerText = "❌ 不正確，請思考應該用乘法還是除法！";
+            }
+        } else {
+            if (parts.length !== 5) {
+                statusIcon.innerText = "❌";
+                msg.style.color = "#d63031";
+                msg.innerText = "❌ 不正確，請改正！";
+                triggerErrorPenalty();
+                return;
+            }
+
+            const n1 = parseInt(parts[0], 10);
+            const op1 = parts[1];
+            const n2 = parseInt(parts[2], 10);
+            const op2 = parts[3];
+            const n3 = parseInt(parts[4], 10);
+
+            const expectedOp = currentQData.isMultiply ? '*' : '/';
+            const isOpCorrect = (op1 === expectedOp && op2 === expectedOp);
+            const userNums = [n1, n2, n3].sort((a, b) => a - b);
+            const expectedNums = [currentQData.num1, currentQData.num2, currentQData.num3].sort((a, b) => a - b);
+            const isNumsCorrect = userNums.every((value, index) => value === expectedNums[index]);
+
+            if (isOpCorrect && isNumsCorrect) {
+                passStep1(statusIcon, msg, "🌟 連除法橫式完全正確！請繼續算出答案：");
+            } else {
+                statusIcon.innerText = "❌";
+                triggerErrorPenalty();
+                msg.style.color = "#d63031";
+                msg.innerText = "❌ 不正確，請改正！";
+            }
+        }
+    }
+
+    function passStep1(statusIcon, msg, successMsg) {
+        isStep1Passed = true;
+        statusIcon.innerText = "✅";
+        msg.style.color = "#00b894";
+        msg.innerText = successMsg;
+
+        document.getElementById('eq-rect-input').disabled = true;
+        document.getElementById('step2-area').style.display = 'flex';
+        document.getElementById('main-btn').innerText = "提交答案";
+        activeInputId = 'in-ans1';
+    }
+
+    function checkStep2Answer() {
+        const rawAns1 = document.getElementById('in-ans1').value.trim();
+        const msg = document.getElementById('feedback');
+
+        let userQ = NaN, userR = 0;
+        if (rawAns1.includes('...')) {
+            const parts = rawAns1.split('...');
+            userQ = parseInt(parts[0], 10);
+            userR = parseInt(parts[1], 10);
+        } else if (rawAns1.includes('.')) {
+            const parts = rawAns1.split('.');
+            userQ = parseInt(parts[0], 10);
+            userR = parseInt(parts[1], 10);
+        } else {
+            userQ = parseInt(rawAns1, 10);
+            userR = 0;
+        }
+
+        const ans2 = parseInt(document.getElementById('in-ans2').value.trim(), 10);
+        
+        let rem2 = 0;
+        if (currentLevel === 1 && currentQData.ansRemainder > 0 && document.getElementById('in-rem2')) {
+            rem2 = parseInt(document.getElementById('in-rem2').value.trim(), 10);
+        } else {
+            rem2 = currentQData.ansRemainder;
+        }
+
+        const isMainAnsCorrect = (userQ === currentQData.ansQuotient && userR === currentQData.ansRemainder && ans2 === currentQData.finalAns && rem2 === currentQData.ansRemainder);
+
+        let isLongDivCorrect = true;
+        if (!currentQData.isThreeNum && !currentQData.isMultiply) {
+            const digitCount = String(currentQData.num1).length;
+            const div = parseInt(document.getElementById('ld-divisor').value.trim(), 10);
+            const userRemainderVal = parseInt(document.getElementById('ld-remainder').value.trim(), 10) || 0;
+
+            if (digitCount === 2) {
+                if (currentQData.ansQuotient < 10) {
+                    const q2 = parseInt(document.getElementById('ld-q2').value.trim(), 10) || 0;
+                    const d1 = parseInt(document.getElementById('ld-dividend1').value.trim(), 10);
+                    const d2 = parseInt(document.getElementById('ld-dividend2').value.trim(), 10);
+                    const p1 = parseInt(document.getElementById('ld-prod2_1').value.trim(), 10) || 0;
+                    const p2 = parseInt(document.getElementById('ld-prod2_2').value.trim(), 10) || 0;
+
+                    const userQuotient = q2;
+                    const userDividend = d1 * 10 + d2;
+                    const userProd = p1 * 10 + p2;
+
+                    isLongDivCorrect = (userQuotient === currentQData.ansQuotient && div === currentQData.num2 && userDividend === currentQData.num1 && userProd === (currentQData.ansQuotient * currentQData.num2) && userRemainderVal === currentQData.ansRemainder);
+                } else {
+                    const q1 = parseInt(document.getElementById('ld-q1').value.trim(), 10) || 0;
+                    const q2 = parseInt(document.getElementById('ld-q2').value.trim(), 10) || 0;
+                    const d1 = parseInt(document.getElementById('ld-dividend1').value.trim(), 10);
+                    const d2 = parseInt(document.getElementById('ld-dividend2').value.trim(), 10);
+
+                    const userQuotient = q1 * 10 + q2;
+                    const userDividend = d1 * 10 + d2;
+                    isLongDivCorrect = (userQuotient === currentQData.ansQuotient && div === currentQData.num2 && userDividend === currentQData.num1 && userRemainderVal === currentQData.ansRemainder);
+                }
+            } else if (digitCount === 3) {
+                const q1 = parseInt(document.getElementById('ld-q1').value.trim(), 10) || 0;
+                const q2 = parseInt(document.getElementById('ld-q2').value.trim(), 10) || 0;
+                const q3 = parseInt(document.getElementById('ld-q3').value.trim(), 10) || 0;
+                const d1 = parseInt(document.getElementById('ld-dividend1').value.trim(), 10);
+                const d2 = parseInt(document.getElementById('ld-dividend2').value.trim(), 10);
+                const d3 = parseInt(document.getElementById('ld-dividend3').value.trim(), 10);
+
+                const userQuotient = q1 * 100 + q2 * 10 + q3;
+                const userDividend = d1 * 100 + d2 * 10 + d3;
+                isLongDivCorrect = (userQuotient === currentQData.ansQuotient && div === currentQData.num2 && userDividend === currentQData.num1 && userRemainderVal === currentQData.ansRemainder);
+            }
+        }
+
+        if (isMainAnsCorrect && isLongDivCorrect) {
+            document.getElementById('main-btn').disabled = true;
+            document.getElementById('in-ans1').disabled = true;
+            document.getElementById('in-ans2').disabled = true;
+            if (document.getElementById('in-rem2')) document.getElementById('in-rem2').disabled = true;
+            
+            msg.style.color = "#00b894";
+            
+            if (!hasErroredThisQuestion) {
+                score += 10;
+                msg.innerText = "🎉 完全正確！一次答對棒極了！(+10分)";
+            } else {
+                score += 5;
+                msg.innerText = "👍 成功改正並算對了！加油！(+5分)";
+            }
+
+            currentQIndex++;
+            updateUI();
+
+            setTimeout(() => {
+                if (currentQIndex >= totalQuestions) {
+                    showGameWinModal();
+                } else {
+                    loadQuestion();
+                }
+            }, 1500);
+
+        } else {
+            triggerErrorPenalty();
+            msg.style.color = "#d63031";
+            msg.innerText = "❌ 答案或直式不正確（請檢查數字填寫與答句是否正確）！";
+        }
+    }
+
+    function showGameWinModal() {
+        for(let i=1; i<=5; i++){
+            const m = document.getElementById(`lv${i}-win-modal`);
+            if(m) m.style.display = 'none';
+        }
+        document.getElementById('final-stats').innerText = `總得分：${score} 分`;
+        document.getElementById('game-win-modal').style.display = 'flex';
+    }
+
+    function triggerErrorPenalty() {
+        if (!hasErroredThisQuestion) {
+            hasErroredThisQuestion = true;
+            totalQuestions++;
+            updateUI();
+        }
+    }
+
+    openLevelSelect();
+</script>
+
+</body>
+</html>
